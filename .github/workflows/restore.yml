@@ -1,0 +1,36 @@
+name: Restore Django assessment project
+on:
+  push:
+    paths:
+      - '.github/workflows/restore.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Import IBM starter
+        run: |
+          git clone --depth 1 https://github.com/ibm-developer-skills-network/tfjzl-final-cloud-app-with-database.git /tmp/ibm-starter
+          tar -C /tmp/ibm-starter --exclude=.git -cf - . | tar -xf -
+      - name: Apply assessment modifications
+        run: |
+          python restore_onlinecourse.py
+          python -m pip install 'Django>=4.2,<6' Pillow
+          python manage.py makemigrations onlinecourse
+          python manage.py check
+      - name: Commit restored project
+        run: |
+          printf '\n*.sqlite3\n__pycache__/\n*.pyc\n.env\n.venv/\n' >> .gitignore
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Restore complete Django assessment application" || exit 0
+          git push
