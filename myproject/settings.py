@@ -128,3 +128,6 @@ MEDIA_URL = '/media/'
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+# Trusted origins for GitHub Codespaces development
+CSRF_TRUSTED_ORIGINS = ['https://*.app.github.dev', 'https://localhost:8000']
