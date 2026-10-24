@@ -1,0 +1,13 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Exam Results</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"></head>
+<body><main class="container mt-4"><h2>{{ course.name }} - Exam Results</h2>
+{% if grade > 80 %}<div class="alert alert-success"><h3>Congratulations!</h3><p>You passed the exam.</p></div>
+{% else %}<div class="alert alert-warning"><h3>Keep Trying!</h3></div>
+<a href="{% url 'onlinecourse:course_details' course.id %}">Re-test</a>{% endif %}
+<h4>Score: {{ total_score }} / {{ possible_score }}</h4><p>Grade: {{ grade|floatformat:1 }}%</p>
+{% for result in question_results %}<section class="card mb-3"><div class="card-body">
+<h5>{{ result.question.question_text }}</h5>
+<p>{% if result.is_correct %}Correct{% else %}Incorrect{% endif %}</p>
+{% for choice in result.choices %}<p>{% if choice in result.selected %}&#9745;{% else %}&#9744;{% endif %}
+{{ choice.choice_text }}{% if choice.is_correct %} (Correct answer){% endif %}</p>{% endfor %}
+</div></section>{% endfor %}</main></body></html>
